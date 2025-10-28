@@ -16,7 +16,12 @@ const useSignUp = () => {
   >({
     mutationFn: signUp,
     onSuccess: async (data, { email, password }) => {
-      await mutate({ email, password })
+      openConfirmModal({
+        text: '회원가입이 완료되었습니다!',
+        onCloseSuccess: () => {
+          mutate({ email, password })
+        },
+      })
     },
     onError: (error) => {
       const text = error?.response?.data?.message || '회원가입에 실패했습니다.'
