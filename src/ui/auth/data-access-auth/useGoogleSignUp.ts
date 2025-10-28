@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import { setTokenCookies } from '@shared/auth'
 import useUserStore from '@zustand/useUserStore'
+import useConfirmModal from '@ui/shared/modal/confirm-modal/useConfirmModal'
 
 interface GoogleSignUpRequest {
   token: string
@@ -33,6 +34,7 @@ interface GoogleSignUpResponse {
 const useGoogleSignUp = () => {
   const router = useRouter()
   const setUser = useUserStore.use.setUser()
+  const { openConfirmModal } = useConfirmModal()
 
   return useMutation({
     mutationFn: async (data: GoogleSignUpRequest) => {
@@ -50,13 +52,19 @@ const useGoogleSignUp = () => {
       setUser(data.user)
 
       // 메인 페이지로 리다이렉트
-      alert('회원가입이 완료되었습니다!')
-      router.push('/')
+      openConfirmModal({
+        text: '회원가입이 완료되었습니다!',
+        onCloseSuccess: () => {
+          router.push('/')
+        },
+      })
     },
     onError: (error: any) => {
       const errorMessage =
         error.response?.data?.message || 'Google 회원가입에 실패했습니다'
-      alert(errorMessage)
+      openConfirmModal({
+        text: errorMessage,
+      })
     },
   })
 }
