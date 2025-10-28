@@ -75,7 +75,7 @@ const SignUpForm = ({ }: SignUpFormProps) => {
               autoComplete='name'
               placeholder='이름을 입력해 주세요'
               rules={{
-                validate: value => value.trim() !== '' || '필수 입력사항입니다.',
+                validate: value => (value && value.trim() !== '') || '필수 입력사항입니다.',
               }}
             />
           </div>
@@ -102,7 +102,7 @@ const SignUpForm = ({ }: SignUpFormProps) => {
               autoComplete='employee-number'
               placeholder='사원번호를 입력해 주세요'
               rules={{
-                validate: value => value.trim() !== '' || '필수 입력사항입니다.',
+                validate: value => (value && value.trim() !== '') || '필수 입력사항입니다.',
               }}
             />
           </div>

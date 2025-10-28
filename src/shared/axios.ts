@@ -73,13 +73,22 @@ instance.interceptors.response.use(
     /**
      * 401 에러 발생 시 토큰 재발급 후 한 번만 재시도하고
      * 실패하면 로그인 페이지로 이동
+     * 단, 로그인/회원가입 API는 제외
      */
     const originalRequest = error.config
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isAuthEndpoint = originalRequest.url?.includes('/auth/login') ||
+                           originalRequest.url?.includes('/auth/google') ||
+                           originalRequest.url?.includes('/users')
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true
 
       try {
         const refreshToken = getCookie('refreshToken')
+        if (!refreshToken) {
+          throw new Error('No refresh token available')
+        }
+
         const { data } = await instance.post<{
           accessToken: string
           refreshToken: string
